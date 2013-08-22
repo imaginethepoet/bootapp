@@ -39,7 +39,7 @@ INSTRUCTIONS
 
 
 COMPONENTS
-* Boot Strap 3 - as of aug 21
+* Boot Strap 3 - as of aug 21 2013
 * Glypicons - 
 * Custom.less - All my custom css overrides
 * Media Queries & Media Reporter - Lets you see a band to view current media query state - Also modifed the queries a bit to work better with my flow.
