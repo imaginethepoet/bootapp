@@ -2,7 +2,9 @@ AutoBootStrap3
 version:1.3
 
 This is my blank starter bootstrap 3 dev environment. I rolled this out into a quick pacakge so I can be up and running
-with a new site in a matter of moments. It's quick dirty and includes the current version of bootstrap3. 
+with a new site in a matter of moments. Sometimes I just want to start building fast and this is my solution to that.
+
+It's quick dirty and includes the current version of bootstrap3 less. 
 I only wrote the gruntfile.js and demo.html (based on my own HTML5 boilerplate), custom.less, application.js as well as the structure and architecture of the build ouput. - but the rest comes from a variety of other sources and fantastic projects.
 Including animate.css, media reporter, bootstrap3, 
 
