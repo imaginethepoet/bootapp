@@ -40,12 +40,24 @@ module.exports = function(grunt) {
           ]
         }
       }
-    },    
+    },
+    coffee: {
+      allcoffee: {
+        options: {
+          beautify: false
+      },
+        files: {
+          'assets/js/demo.js': [  // compile all the latest and greatest coffee files
+            'build/custom/js/**/*.coffee',
+          ]
+        }
+      }
+    },         
     less: {
       development: {
         options: {
-          compress: true,
-          yuicompress: true,
+          compress: false,
+          yuicompress: false,
           optimization: 2
         },
         files: {
@@ -66,7 +78,11 @@ module.exports = function(grunt) {
       javascript: {
         files: ['build/custom/application.js'],
         tasks: ['uglify:dist2' ]
-      }
+      },
+      allcoffee: {
+        files: ['build/custom/js/**/*.coffee'],
+        tasks: ['coffee' ]
+      }      
     }
   });
  
@@ -74,6 +90,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
- 
+  grunt.loadNpmTasks('grunt-contrib-coffee');
 
 };
