@@ -1,0 +1,12 @@
+{
+  "name": "abs3-bower",
+  "version": "0.0.0",
+  "directory": "packages",
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "bootstrap": ""
+  },
+    "requirejs": {
+      "js": "require.js"
+    }
+}
