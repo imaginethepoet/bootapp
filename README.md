@@ -1,11 +1,61 @@
 
 AutoBootStrap3
-version:1.5
+version:2.0
 
 This is my blank starter bootstrap 3 dev environment. I rolled this out into a quick pacakge so I can be up and running
-with a new site or application prototype in a matter of moments. It's quick dirty and includes the current version of bootstrap3. 
-I only wrote the gruntfile.js and demo.html (based on my own HTML5 boilerplate), custom.less, application.js as well as the structure and architecture of the build ouput. - but the rest comes from a variety of other sources and fantastic projects.
-Including animate.css, media reporter, bootstrap3, 
+with a new site or application prototype in a matter of moments. With the user of node  express you get an instance web server.
+This is tuned to my own development and the way I like to build quick prototypes, or entire web sites. It's comprised of gruntfile.coffee, 
+and several components to help test responsive design.
+
+In every way possible I have decoupled bootstrap3 so it's easier to update when changes come along. This includes if you needt to make
+one off fixes. I've included the fantastic animo.js & animate.css library for css 3 transitions management. My own version of HTML5 Boilerplate.
+
+You can write your application functions in js, but I currently only support coffeescript. 
+
+
+PRE-REQUESITES:
+1. You need to install node and make sure to set it up for the command line. (http://nodejs.org/)
+2. Make sure you install "git" grunt bower will need this to git packages and make sure its command line accessible.
+3. You need to install grunt http://gruntjs.com/getting-started also make sure you use the npm install grunt --save-dev otpion
+
+
+
+DIRECTORY EXPLANATIONS:
+* All production assets are in the assets directory
+*  js/vendor - contains third party scripts by components
+
+* build - contains all the necessary pre production assets including a few custom ones
+  - /build/custom - These are a lot of my custom implementations.
+  		-/custom/coffee - custom coffee scripts go in here all gets compiled to /assets/js/app.js
+		-/custom/fonts - custom fonts
+		-/custom/less/ - all less files in here get compiled to assets/css/main.css 
+		I do a custom injection of a "custom.less" into bootstrap.less to allow for using mixins etc..
+		-/custom/variables/ - 
+
+
+INSTRUCTIONS:
+1. Complete pre-requesites
+2. Unzip "AutoBootStrap3" or git it to an empty directory ie "test" 
+3. Open up your favorite command line tool and cd to the directory you created
+4. Enter npm install - this should setup all the pre-requesite node modules
+5. For a first time setup of bootstrap, and to create the assets directory run "grunt setup-bs"
+6. You should now have the assets directory, and everything you need!
+7. Type "grunt watch" - this will setup an instance of watch that will check for changes in your less, coffeescript, compile
+and update your assets folder. 
+
+
+TROUBLESHOOT:
+You may need to use SUDO on mac if any of the pre-reqs fail.
+
+
+
+v2.0
+* What happened to 1.5 & 1.6. Well I sort of leap frog them. It seemed fitting to just roll up to 2.0
+with all the changes I have made.
+
+* Tied in bower and an initial "grunt setup" command (meant to be ran once). This will essentially
+go out pull the latest bootstrap. Install it and copy out the appropriate files to the js directory.
+
 
 
 v1.5
@@ -30,22 +80,6 @@ v1.3
 * updated to include glphyicons library
 
 
-
-INSTRUCTIONS
-1. Install the latest version of node. http://nodejs.org
-2. Create a new empty project directory.
-3. Install grunt in this directory
-4. npm install -g grunt-cli
-5. Next: npm install grunt --save-dev - to setup grunt in this directory
-6. Unzip "AutoBootStrap3" site assets will be placed in the assets directory. You shouldn't need to modify the grunt file.
-7. Install the following libs for grunt via terminal / command line in your new project directory
-    npm install grunt-contrib-less
-8. If you want to update to the lastest build of bootstrap you can get this from github - https://github.com/twbs/bootstrap
-	- Copy the js & less files to the bootstrap3 directory.
-	- update the variables.less in the custom directory (newer versions of bootstrap sometimes add new vars)
-	- currently using boostrap.min.js - compiled seperately - i also have all the js files just in case i need them.
-	- if you change path of assets you will need to update the path in gruntfile.js accordingly.
-9. I have currently one watch command - so from command line enter "grunt watch" from your new project directory.
 
 
 

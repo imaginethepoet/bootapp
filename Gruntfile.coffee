@@ -40,7 +40,34 @@ module.exports = (grunt) ->
 
       bootstrap:
         src: ["bower_components/bootstrap/js/bootstrap.min.js"]
-        dest: "assets/js/bootstrap.min.js"
+        dest: "assets/vendor/bs3/bootstrap.min.js"
+
+
+  # setup my custom directory structure
+    shell:
+      multiple:
+        command:['mkdir assets',
+          'cd assets',
+          'mkdir css',
+          'mkdir fonts',
+          'mkdir ico',
+          'mkdir img',
+          'mkdir js', 
+          'mkdir vendor'                  
+        ].join('&&')
+
+
+  #string replace to update the bootstrap.less with my custom overrides & utils
+
+    replace:
+      customcssforbootstrap:
+        src: ["bower_components/bootstrap/less/bootstrap.less"]
+        overwrite: true # overwrite matched source files
+        replacements: [
+          from: '@import "carousel.less";'
+          to: '@import "carousel.less"; \n \n // Custom CSS overrides \n @import "custom/less/custom.less";'
+        ]
+
 
 
     copy:
@@ -86,15 +113,11 @@ module.exports = (grunt) ->
           yuicompress: false
           optimization: 2          
 
-    connect: 
-      site1: 
-        options: 
-          port: 7000,
-          base: ''
+
         
     coffee:
       allcoffee:
-        src: "build/custom/coffee/*.coffee"
+        src: "custom/coffee/*.coffee"
         dest: "assets/js/app.js"
         options:
           beautify:false
@@ -102,18 +125,27 @@ module.exports = (grunt) ->
 
 
   # lets watch all the stuff going on for live changes.
+  # and then update our live reload instance at the server
+  # http://localhost:35729
+
      watch:
-        less:
-          files: ["build/bootstrap3/less/**/*.less", "build/custom/**/*.less"] 
-          tasks: ["less"]
+      css:
+        files: ["custom/less/**/*.less", "custom/**/*.less"] 
+        tasks: ["less"]
 
-        coffee:
-          files: ["build/custom/coffee/**/*.coffee"]
-          tasks: ["coffee"]
+      customcss:
+        files: ["custom/less/**/*.less", "custom/**/*.less"] 
+        tasks: ["less"]
+
+
+      coffee:
+        files: ["custom/coffee/**/*.coffee"]
+        tasks: ["coffee"]
 
 
 
-  grunt.loadNpmTasks "grunt-contrib-connect"
+
+  grunt.loadNpmTasks "grunt-shell"
   grunt.loadNpmTasks "grunt-contrib-jshint"
   grunt.loadNpmTasks "grunt-contrib-less"
   grunt.loadNpmTasks "grunt-contrib-uglify"
@@ -123,16 +155,23 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-uglify"
   grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-text-replace"
 
-  grunt.registerTask "setup", "bower"
+
+  grunt.registerTask "setupbootstrap", "bower"
   grunt.registerTask "copyjquery", "copy"
   grunt.registerTask "copybscss", "copy:bscss"
   grunt.registerTask "copybsfonts", "copy:bsfonts"
   grunt.registerTask "copybsjs", "copy:bsjs"
+  grunt.registerTask "setupdirs", "shell"
+
+  grunt.registerTask "replacebs", "replace"
+
+
+  grunt.registerTask "lesstest", "less:customless"
 
   grunt.registerTask('lessme', ['less:development']);
 
-  grunt.registerTask('dist-js', ['concat', 'uglify']);
-
-  grunt.registerTask('setupbs', ['copy:bscss', 'copy:bsfonts', 'copy:bsjs']);
-  grunt.registerTask('default', ['connect', 'watch']);
+  grunt.registerTask('setup-bs', ['setupdirs','setupbootstrap', 'copy:bsfonts', 'copy:bsjs', 'replace:customcssforbootstrap', 'less', 'watch']);
+  
+  grunt.registerTask('default', ['watch']);
