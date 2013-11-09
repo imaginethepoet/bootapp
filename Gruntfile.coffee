@@ -12,7 +12,7 @@ module.exports = (grunt) ->
          install: true
          verbose: true
          cleanTargetDir: true
-         cleanBowerDir: true
+         cleanBowerDir: false
 
 
   # setup my resources directory structure
@@ -89,24 +89,20 @@ module.exports = (grunt) ->
       mediaelementpackage:
         expand: true
         flatten: false
-        cwd: "bower_components/mediaelement/src"        
+        cwd: "bower_components/mediaelement/build"        
         src: "**"
         dest: "assets/vendor/mediaelement"
 
 
 
-
-
-#      bscss:
-#        expand: true
-#        flatten: false
-#        cwd: "bower_components/bootstrap/dist/css"        
-#        src: "bootstrap.min.css"
-#        dest: "assets/vendor/bs3"
-
-
-
-
+  # setup a webserver instance.
+    connect: 
+      all: 
+        options: 
+          port: 9000
+          base: ['.']
+          livereload: true
+ 
 
 
   # setup all the normal tasks to automate stuff.
@@ -116,8 +112,8 @@ module.exports = (grunt) ->
         src: "bower_components/bootstrap/less/bootstrap.less"
         dest: "assets/css/main.css"
         options:
-          compress: false
-          yuicompress: false
+          compress: true
+          yuicompress: true
           optimization: 2          
 
 
@@ -133,11 +129,12 @@ module.exports = (grunt) ->
 
   # lets watch all the stuff going on for live changes.
   # and then update our live reload instance at the server
-  # http://localhost:35729
+  # http://localhost:9001
 
      watch:
       options:
         atBegin:true
+        livereload: true
       css:
         files: ["resources/less/**/*.less", "resources/**/*.less"] 
         tasks: ["less"]
@@ -178,19 +175,21 @@ module.exports = (grunt) ->
   grunt.registerTask "copy-modernizr-js", "copy:modernizrjs"
   grunt.registerTask "copy-mediaelement-package", "copy:mediaelementpackage"
 
+
   #copy all
-  grunt.registerTask "copy-all", "copy-bs-js","copy-jquery-js","copy-animo-js","copy-animo-css","copy-modernizr-js", "copy-mediaelement-package"
+  grunt.registerTask('copy-all', ['copy-bs-js', 'copy-jquery-js', 'copy-animo-js', 'copy-modernizr-js','copy-mediaelement-package']);
+
 
 
   # task to update the variables with a custom variable replacement for custom css injection from less
   grunt.registerTask "allow-custom-css", "replace:resourcescssforbootstrap"
 
 
+  # run all the steps to build a custom bootapp
+  grunt.registerTask('create-app', ['setup-app-dirs', 'setup-bs-app-files', 'copy-all', 'allow-custom-css', 'watch']);
 
-
-  #web app or site setup
-  grunt.registerTask "create-app", "setup-app-dirs", "setup-bs-app-files", "copy-all", "allow-custom-css", "watch"
-
+  #create create connect server
+  grunt.registerTask "connect-server", "connect:server"
 
   
-  grunt.registerTask('default', ['watch']);
+  grunt.registerTask('default', ['watch', 'connect-server']);

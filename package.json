@@ -1,6 +1,6 @@
 {
-  "name": "AutoBootStrap3",
-  "version": "2.1.0",
+  "name": "BootApp",
+  "version": "1.0.0",
   "description": "A quick rapid protoyping framework using bs3 and other files",
   "author": "Preston McCauley",
   "sourcedir": "",
