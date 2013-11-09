@@ -1,51 +1,23 @@
 module.exports = (grunt) ->
   grunt.initConfig
+    pkg: grunt.file.readJSON('package.json'),
 
-  # initial setup functions to get latest jquery & bootstrap3
+  # initial setup functions to get lates bootstrap, jquery, and component resources, media element, modernizr,animo.js
 
     bower:
       install:
         options:
-          targetDir: "build/"
-          layout: "byComponent"
-          install: true
-          verbose: true
-          cleanTargetDir: true
-          cleanBowerDir: false
-
-    concat:
-      options:
-        banner: ""
-        stripBanners: true
-
-      bootstrap:
-        src: ["bower_components/bootstrap/js/transition.js", 
-        "bower_components/bootstrap/js/alert.js", 
-        "bower_components/bootstrap/js/button.js", 
-        "bower_components/bootstrap/js/carousel.js", 
-        "bower_components/bootstrap/js/collapse.js", 
-        "bower_components/bootstrap/js/dropdown.js", 
-        "bower_components/bootstrap/js/modal.js", 
-        "bower_components/bootstrap/js/tooltip.js", 
-        "bower_components/bootstrap/js/popover.js", 
-        "bower_components/bootstrap/js/scrollspy.js", 
-        "bower_components/bootstrap/js/tab.js", 
-        "bower_components/bootstrap/js/affix.js"]
-        dest: "bower_components/bootstrap/js/bootstrap.full.js"
+         targetDir: "pre-build/"
+         layout: "byComponent"
+         install: true
+         verbose: true
+         cleanTargetDir: true
+         cleanBowerDir: true
 
 
-    uglify:
-      options:
-        banner: ""
-
-      bootstrap:
-        src: ["bower_components/bootstrap/js/bootstrap.min.js"]
-        dest: "assets/vendor/bs3/bootstrap.min.js"
-
-
-  # setup my custom directory structure
+  # setup my resources directory structure
     shell:
-      multiple:
+      setupdirs:
         command:['mkdir assets',
           'cd assets',
           'mkdir css',
@@ -57,47 +29,82 @@ module.exports = (grunt) ->
         ].join('&&')
 
 
-  #string replace to update the bootstrap.less with my custom overrides & utils
+
+
+
+
+  #string replace to update the bootstrap.less with my resources overrides & utils
+  # this allows you to use the core bootstrap less files and all the make commands inside
+  # also allow syou to update your app with bootstrap css file & include your own custom overrides at the end
+  # this does a search in the distribution of bootstrap and overwrites the file but first inserts a link to the resources folder
+  # Once this link is in place watching less will compile and run all your resources in to one nice main.css file
 
     replace:
-      customcssforbootstrap:
+      resourcescssforbootstrap:
         src: ["bower_components/bootstrap/less/bootstrap.less"]
         overwrite: true # overwrite matched source files
         replacements: [
           from: '@import "carousel.less";'
-          to: '@import "carousel.less"; \n \n // Custom CSS overrides \n @import "custom/less/custom.less";'
+          to: '@import "carousel.less"; \n \n // custom CSS overrides and resources \n@import "resources/less/custom.less";'
         ]
 
 
 
     copy:
-      main:
+      bsjs:
+        expand: true
+        flatten: false
+        cwd: "bower_components/bootstrap/dist/js/"        
+        src: "bootstrap.min.js"
+        dest: "assets/js/"
+
+      jqueryjs:
         expand: true
         flatten: false
         cwd: "bower_components/jquery/"        
         src: "jquery.min.js"
         dest: "assets/js/"
 
-      bscss:
+      animojs:
         expand: true
         flatten: false
-        cwd: "bower_components/bootstrap/dist/css"        
-        src: "bootstrap.min.css"
-        dest: "assets/vendor/bs3"
+        cwd: "bower_components/animo.js/"        
+        src: "animo.js"
+        dest: "assets/js/"
 
-      bsfonts:
+      animocss:
         expand: true
         flatten: false
-        cwd: "bower_components/bootstrap/dist/fonts"        
+        cwd: "bower_components/animo.js/"        
+        src: "animate+animo.css"
+        dest: "assets/css/"
+
+      modernizrjs:
+        expand: true
+        flatten: false
+        cwd: "bower_components/modernizr/"        
+        src: "modernizr.js"
+        dest: "assets/js/"
+
+      mediaelementpackage:
+        expand: true
+        flatten: false
+        cwd: "bower_components/mediaelement/src"        
         src: "**"
-        dest: "assets/vendor/bs3"
+        dest: "assets/vendor/mediaelement"
 
-      bsjs:
-        expand: true
-        flatten: false
-        cwd: "bower_components/bootstrap/dist/js"        
-        src: "bootstrap.min.js"
-        dest: "assets/vendor/bs3"
+
+
+
+
+#      bscss:
+#        expand: true
+#        flatten: false
+#        cwd: "bower_components/bootstrap/dist/css"        
+#        src: "bootstrap.min.css"
+#        dest: "assets/vendor/bs3"
+
+
 
 
 
@@ -117,7 +124,7 @@ module.exports = (grunt) ->
         
     coffee:
       allcoffee:
-        src: "custom/coffee/*.coffee"
+        src: "resources/coffee/*.coffee"
         dest: "assets/js/app.js"
         options:
           beautify:false
@@ -129,17 +136,14 @@ module.exports = (grunt) ->
   # http://localhost:35729
 
      watch:
+      options:
+        atBegin:true
       css:
-        files: ["custom/less/**/*.less", "custom/**/*.less"] 
+        files: ["resources/less/**/*.less", "resources/**/*.less"] 
         tasks: ["less"]
-
-      customcss:
-        files: ["custom/less/**/*.less", "custom/**/*.less"] 
-        tasks: ["less"]
-
 
       coffee:
-        files: ["custom/coffee/**/*.coffee"]
+        files: ["resources/coffee/**/*.coffee"]
         tasks: ["coffee"]
 
 
@@ -158,20 +162,35 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-text-replace"
 
 
-  grunt.registerTask "setupbootstrap", "bower"
-  grunt.registerTask "copyjquery", "copy"
-  grunt.registerTask "copybscss", "copy:bscss"
-  grunt.registerTask "copybsfonts", "copy:bsfonts"
-  grunt.registerTask "copybsjs", "copy:bsjs"
-  grunt.registerTask "setupdirs", "shell"
-
-  grunt.registerTask "replacebs", "replace"
+  #create app dir structure to be served up via connect
+  grunt.registerTask "setup-app-dirs", "shell:setupdirs"
 
 
-  grunt.registerTask "lesstest", "less:customless"
+  #register taks to load bootstrap via bower and begin processing
+  grunt.registerTask "setup-bs-app-files", "bower"
 
-  grunt.registerTask('lessme', ['less:development']);
 
-  grunt.registerTask('setup-bs', ['setupdirs','setupbootstrap', 'copy:bsfonts', 'copy:bsjs', 'replace:customcssforbootstrap', 'less', 'watch']);
+  #copy tasks
+  grunt.registerTask "copy-bs-js", "copy:bsjs"
+  grunt.registerTask "copy-jquery-js", "copy:jqueryjs"
+  grunt.registerTask "copy-animo-js", "copy:animojs"
+  grunt.registerTask "copy-animo-css", "copy:animocss"
+  grunt.registerTask "copy-modernizr-js", "copy:modernizrjs"
+  grunt.registerTask "copy-mediaelement-package", "copy:mediaelementpackage"
+
+  #copy all
+  grunt.registerTask "copy-all", "copy-bs-js","copy-jquery-js","copy-animo-js","copy-animo-css","copy-modernizr-js", "copy-mediaelement-package"
+
+
+  # task to update the variables with a custom variable replacement for custom css injection from less
+  grunt.registerTask "allow-custom-css", "replace:resourcescssforbootstrap"
+
+
+
+
+  #web app or site setup
+  grunt.registerTask "create-app", "setup-app-dirs", "setup-bs-app-files", "copy-all", "allow-custom-css", "watch"
+
+
   
   grunt.registerTask('default', ['watch']);

@@ -1,10 +1,13 @@
 {
   "name": "abs3-bower",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "directory": "packages",
   "dependencies": {
     "jquery": "~2.0.3",
-    "bootstrap": ""
+    "modernizr": "~2.6.2",
+    "bootstrap": "~3.0.0",
+    "mediaelement": "~2.13.1", 
+    "animo.js": "" 
   },
     "requirejs": {
       "js": "require.js"
